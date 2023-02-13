@@ -3,8 +3,6 @@ import fs from 'fs';
 class ProductManager {
   constructor(path) {
     this.path = path;
-    this.products = [];
-    this.count = 0;
   }
   async getProducts() {
     if (this.fileExists(this.path)) {
@@ -89,7 +87,7 @@ class ProductManager {
     }
   }
 
-  async deleteById(id) {
+  async deleteProductById(id) {
     if (this.fileExists(this.path)) {
       try {
         let products = await this.getProducts();
@@ -120,6 +118,7 @@ class ProductManager {
     if (this.fileExists(this.path)) {
       try {
         let products = await this.getProducts();
+        id = parseInt(id);
         let prodIndex = products.findIndex((item) => item.id === id);
 
         if (prodIndex !== -1) {
@@ -134,11 +133,12 @@ class ProductManager {
           };
 
           let update = products[prodIndex];
+
           await fs.promises.writeFile(
             this.path,
             JSON.stringify(products, null, 2)
           );
-          return update;
+          return id;
         }
         throw Error('Not Found');
       } catch (error) {
@@ -164,35 +164,3 @@ class ProductManager {
 }
 
 export default ProductManager;
-
-// const instance = new ProductManager('products.txt');
-
-// (async () => {
-//   let products = await instance.getProducts();
-//   console.log('products :>> ', products);
-//   let product = await instance.addProduct({
-//     title: 'producto prueba',
-//     description: 'Este es un producto prueba',
-//     price: 200,
-//     thumbnail: 'Sin imagen',
-//     code: 'ac12',
-//     stock: 25,
-//   });
-//   console.log('product', product);
-
-//   let deleted = await instance.deleteById(3);
-//   console.log(deleted);
-//   console.log('products :>> ', products);
-
-//   console.log('getProductById(1)', await instance.getProductById(4));
-//   let update = await instance.updateProduct(3, {
-//     title: 'producto prueba',
-//     description: 'Este es un producto prueba',
-//     price: 200,
-//     thumbnail: 'Sin imagen',
-//     code: 'ac12',
-//     stock: 25,
-//   });
-
-//   console.log(update);
-// })();
